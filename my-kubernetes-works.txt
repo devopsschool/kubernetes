@@ -1,0 +1,66 @@
+export KUBECONFIG=$HOME/admin.conf
+
+pwd
+/home/ubuntu/kube-example
+110.110.112.160
+ export KUBECONFIG=$HOME/admin.conf
+
+kubectl create -f deploy.yml
+deploy.yml
+-----------------------------------------
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: hello-deploy
+spec:
+  replicas: 10
+  template:
+    metadata:
+      labels:
+        app: hello-world
+    spec:
+      containers:
+      - name: hello-pod
+        image: nigelpoulton/pluralsight-docker-ci:latest
+        ports:
+        - containerPort: 8080
+-------------------------------------------------
+kubectl get rs
+updated deploy.yml
+-------------------------------
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: hello-deploy
+spec:
+  replicas: 10
+  minReadySeconds: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: hello-world
+    spec:
+      containers:
+      - name: hello-pod
+        image: nigelpoulton/pluralsight-docker-ci:edge
+        ports:
+        - containerPort: 8080
+-----------------------------------
+kubectl apply -f deploy.yml --record
+kubectl rollout status deployment hello-deploy
+kubectl get deploy hello-deploy
+kubectl rollout history deployment hello-deploy
+kubectl get rs
+kubectl rollout undo deployment hello-deploy --to-revision=1
+
+
+--------------
+cleaning env kubectl delete -f svcfilename/deplomentfilename
+
+kubectl autoscale deployment foo --min=2 --max=10
+kubectl autoscale rc foo --max=5 --cpu-percent=80
